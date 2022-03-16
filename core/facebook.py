@@ -30,7 +30,7 @@ class Facebook:
                 'EAAI': EAAI,
                 'EAAG': EAAG,
                 'sessions': self.apiGetSessions(),
-                'me': self.apiGetMe(EAAI),
+                'me': self.apiGetMe(EAAG),
                 'adaccounts': self.apiGetAdaccountsMapping(EAAI, self.apiGetUID()),
                 'businesses': self.apiGetBusinesses(EAAG),
                 'pages': self.apiGetFacebookPages(EAAI)
