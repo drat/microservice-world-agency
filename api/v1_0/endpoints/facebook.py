@@ -19,4 +19,4 @@ def checker_facebook_account(req: ReqValueChecker):
         fb = Facebook(cookie)
         return fb.onCheck()
     except:
-        raise HTTPException(status_code=404)
+        raise HTTPException(status_code=403)
