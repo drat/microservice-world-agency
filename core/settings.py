@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    API__v1_0: str = '/api/v1.0'
+    API__V1_0: str = '/api/v1.0'
 
     TITLE: str = 'Microservice World Agency'
     OPENAPI_URL: str = '/api/openapi.json'

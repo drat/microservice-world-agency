@@ -2,9 +2,9 @@ from fastapi import APIRouter
 
 from .endpoints import facebook
 
-api_router = APIRouter()
-api_router.include_router(
-    facebook.api_router,
+apiRouter = APIRouter()
+apiRouter.include_router(
+    facebook.apiRouter,
     prefix=facebook.prefix,
     tags=facebook.tags
 )
