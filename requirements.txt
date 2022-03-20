@@ -2,3 +2,5 @@ autopep8
 requests
 fastapi
 uvicorn
+peewee
+psycopg2

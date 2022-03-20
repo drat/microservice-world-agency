@@ -4,7 +4,9 @@ from starlette.middleware.cors import CORSMiddleware
 
 from core.settings import settings
 from api.v1_0.api import apiRouter
+from core.db import seed
 
+seed.initial()
 app = FastAPI(
     title=settings.TITLE,
     openapi_url=settings.OPENAPI_URL,

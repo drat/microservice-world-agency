@@ -13,5 +13,11 @@ class Settings(BaseSettings):
     ALLOW_METHODS: List[str] = ['*']
     ALLOW_HEADERS: List[str] = ['*']
 
+    API_DATABASE_NAME: str = 'world-agency'
+    API_DATABASE_HOST: str = '103.141.141.121'
+    API_DATABASE_PORT = 5432
+    API_DATABASE_USERNAME = 'postgres'
+    API_DATABASE_PASSWORD = '^Tuan27121998'
+
 
 settings = Settings()

