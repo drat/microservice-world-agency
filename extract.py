@@ -68,6 +68,6 @@ class Extract:
 
 
 Extract().toFile(
-    './_temp/03-20-2022_0/**/*.txt',
-    './_temp/03-20-2022_0.txt'
+    './_temp/03-21-2022_2/**/*.txt',
+    './_temp/03-21-2022_2.txt'
 )
