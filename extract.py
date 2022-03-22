@@ -8,8 +8,11 @@ class Extract:
         pass
 
     def pathNameToText(self, pathName):
-        with open(pathName, 'r', encoding='utf-8', errors='ignore') as fOpen:
-            return fOpen.read().strip()
+        try:
+            with open(pathName, 'r', encoding='utf-8', errors='ignore') as fOpen:
+                return fOpen.read().strip()
+        except:
+            return ''
 
     def textToValues(self, text):
         values = []
@@ -68,6 +71,6 @@ class Extract:
 
 
 Extract().toFile(
-    './_temp/03-21-2022_5/**/*.txt',
-    './_temp/03-21-2022_5.txt'
+    './_temp/03-21-2022_3/**/*.txt',
+    './_temp/03-21-2022_3.txt'
 )
