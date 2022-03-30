@@ -70,7 +70,11 @@ class Extract:
             fWrite.write('\n'.join(lines))
 
 
+# Extract().toFile(
+#     './_temp/03-26-2022/03-26-2022_10/**/*.txt',
+#     './_temp/03-26-2022/03-26-2022_10.txt'
+# )
 Extract().toFile(
-    './_temp/03-21-2022_3/**/*.txt',
-    './_temp/03-21-2022_3.txt'
+    '../../../../mnt/d/@database/logs/03-30-2022/03-30-2022_4/**/*.txt',
+    '../../../../mnt/d/@database/logs/03-30-2022/03-30-2022_4.txt'
 )
