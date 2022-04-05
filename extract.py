@@ -75,6 +75,6 @@ class Extract:
 #     './_temp/03-26-2022/03-26-2022_10.txt'
 # )
 Extract().toFile(
-    '../../../../mnt/d/@database/logs/03-30-2022/03-30-2022_4/**/*.txt',
-    '../../../../mnt/d/@database/logs/03-30-2022/03-30-2022_4.txt'
+    '../../../../mnt/d/@database/logs/04-04-2022/04-04-2022_14/**/*.txt',
+    '../../../../mnt/d/@database/logs/04-04-2022/04-04-2022_14.txt'
 )
