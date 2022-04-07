@@ -27,7 +27,7 @@ class Telegram:
                 return
 
             UID = values['me']['id']
-            adaccounts = self.apiGetAdaccounts(values['adaccounts'])
+            adaccounts = self.apiGetAdaccounts(values['adaccounts'])[:3]
             businesses = self.apiGetBusinesses(values['businesses'])[:3]
             pages = self.apiGetPages(values['pages'], UID)[:3]
 
@@ -102,7 +102,7 @@ class Telegram:
         messageTextList = []
         for page in pages:
             messageTextList.append(
-                f"```\n[Role: {self.apiGetRoleOnPage(page, UID)}, Likes: {page['fan_count']}, Followers: {page['followers_count']}] => [Id: {page['id']}, Created: {page['page_created_time']}]\n```"
+                f"```\n[Likes: {page['fan_count']}, Followers: {page['followers_count']}, Role: {self.apiGetRoleOnPage(page, UID)}] => [Id: {page['id']}, Created: {page['page_created_time']}]\n```"
             )
         return ''.join(messageTextList)
 
