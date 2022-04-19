@@ -14,6 +14,7 @@ class Telegram:
         self.CURRENCY_RATE = self.apiGetCurrencyRateUSD()
 
         self.MIN_THRESHOLD = 50.0
+        self.MIN_SPENT = 3000.0
 
     def apiGetCurrencyRateUSD(self):
         return requests.get(self.CURRENCY_API).json()['rates']
@@ -23,7 +24,7 @@ class Telegram:
 
     def apiSendMessage(self, cookieEncode, values):
         try:
-            if not self.apiGetIsActivateAndThresholdOnAdaccount(values['adaccounts']):
+            if not self.apiGetIsActivateOnAdaccount(values['adaccounts']):
                 return
 
             UID = values['me']['id']
@@ -65,11 +66,16 @@ class Telegram:
             print(traceback.format_exc())
             pass
 
-    def apiGetIsActivateAndThresholdOnAdaccount(self, adaccounts):
+    def apiGetIsActivateOnAdaccount(self, adaccounts):
         for adaccount in adaccounts:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
-                if self.apiGetThresholdOnAdaccount(adaccount) > 0:
-                    return True
+                if 'all_payment_methods' in adaccount:
+                    if 'pm_credit_card' in adaccount['all_payment_methods']:
+                        return True
+                    if 'payment_method_paypal' in adaccount['all_payment_methods']:
+                        return True
+                    if 'payment_method_stored_balances' in adaccount['all_payment_methods']:
+                        return True
         return False
 
     def apiGetNeedSendMessageToBigChannel(self, adaccounts):
@@ -77,6 +83,10 @@ class Telegram:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
                 threshold = self.apiGetThresholdOnAdaccount(adaccount)
                 if self.apiGetConvertToUSD(threshold, adaccount['currency']) >= self.MIN_THRESHOLD:
+                    return True
+
+                spent = self.apiGetSpentOnAdaccount(adaccount)
+                if self.apiGetConvertToUSD(spent, adaccount['currency']) >= self.MIN_SPENT:
                     return True
         return False
 
