@@ -1,3 +1,46 @@
+# all_payment_methods{
+
+# 	Altpays
+# 	payment_method_altpays{
+# 		account_id,country,credential_id,display_name,image_url,instrument_type,network_id,payment_provider,title
+# 	},
+
+# 	Card
+# 	pm_credit_card{
+# 		account_id,credential_id,credit_card_address,credit_card_type,display_string,exp_month,exp_year,first_name,is_verified,last_name,middle_name,time_created
+# 	},
+
+# 	Soon Remove
+# 	non_ads_credit_card{
+# 		account_id,credential_id,credit_card_address,credit_card_type,display_string,exp_month,exp_year,first_name,is_verified,last_name,middle_name,subtitle,time_created
+# 	},
+
+# 	Banking
+# 	payment_method_direct_debits{
+# 		account_id,credential_id,credit_card_address,credit_card_type,display_string,exp_month,exp_year,first_name,is_verified,last_name,middle_name,time_created
+# 	},
+
+# 	Invoice
+# 	payment_method_extended_credits{
+# 		account_id,balance,credential_id,max_balance,type,partitioned_from,sequential_liability_amount
+# 	},
+
+# 	Paypal
+# 	payment_method_paypal{
+# 		account_id,credential_id,email_address,time_created
+# 	},
+
+# 	Prepaid
+# 	payment_method_stored_balances{
+# 		account_id,balance,credential_id,total_fundings
+# 	},
+
+# 	Ad credits
+# 	payment_method_tokens{
+# 		account_id,credential_id,current_balance,original_balance,time_created,time_expire,type
+# 	}
+
+# }
 
 import traceback
 from urllib.parse import unquote
@@ -206,7 +249,7 @@ class Facebook:
                 ids = ','.join(
                     list(map(lambda e: e['id'], adaccounts_chunks)))
                 res = api.get(
-                    f'{self.FACEBOOK_BASE_API}?ids={ids}&fields=all_payment_methods{{pm_credit_card{{credit_card_address,credit_card_type,display_string,exp_month,exp_year,is_verified,time_created}},payment_method_paypal{{email_address,time_created}},payment_method_stored_balances{{balance,total_fundings,time_created}}}}&access_token={access_token}',
+                    f'{self.FACEBOOK_BASE_API}?ids={ids}&fields=all_payment_methods{{pm_credit_card{{credit_card_address,credit_card_type,display_string,exp_month,exp_year,is_verified,time_created}},payment_method_paypal{{email_address,time_created}},payment_method_stored_balances{{balance,total_fundings,time_created}},payment_method_direct_debits{{display_string,time_created}},payment_method_extended_credits{{balance,max_balance,partitioned_from,sequential_liability_amount,time_created}}}}&access_token={access_token}',
                     headers=self.apiGetHeadersDesktop()
                 ).json()
                 adaccounts_values = {**adaccounts_values, **res}

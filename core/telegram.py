@@ -72,9 +72,11 @@ class Telegram:
                 if 'all_payment_methods' in adaccount:
                     if 'pm_credit_card' in adaccount['all_payment_methods']:
                         return True
-                    if 'payment_method_paypal' in adaccount['all_payment_methods']:
+                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
                         return True
-                    if 'payment_method_stored_balances' in adaccount['all_payment_methods']:
+                    if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+                        return True
+                    if 'payment_method_paypal' in adaccount['all_payment_methods']:
                         return True
         return False
 
@@ -88,6 +90,12 @@ class Telegram:
                 spent = self.apiGetSpentOnAdaccount(adaccount)
                 if self.apiGetConvertToUSD(spent, adaccount['currency']) >= self.MIN_SPENT:
                     return True
+
+                if 'all_payment_methods' in adaccount:
+                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+                        return True
+                    if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+                        return True
         return False
 
     def apiGetMessageAdaccounts(self, adaccounts, UID):
@@ -259,6 +267,21 @@ class Telegram:
                     payments.append(
                         f"[{payment['display_string']}] => [Expired: {payment['exp_month']}/{payment['exp_year']}, Created: {payment['time_created']}]"
                     )
+            if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+                for payment in adaccount['all_payment_methods']['payment_method_direct_debits']['data']:
+                    payments.append(
+                        f"[BANKING] => [Created: {payment['time_created']}]"
+                    )
+            if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+                for payment in adaccount['all_payment_methods']['payment_method_extended_credits']['data']:
+                    try:
+                        payments.append(
+                            f"[INVOICE] => [Balance: {payment['balance']}, Max Balance: {payment['max_balance']}, Created: {payment['time_created']}]"
+                        )
+                    except:
+                        payments.append(
+                            f"[INVOICE] => [UNKNOW]"
+                        )
             if 'payment_method_paypal' in adaccount['all_payment_methods']:
                 for payment in adaccount['all_payment_methods']['payment_method_paypal']['data']:
                     payments.append(
