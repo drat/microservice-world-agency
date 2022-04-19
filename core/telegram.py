@@ -120,8 +120,7 @@ class Telegram:
         adaccounts_fixed = []
         for adaccount in adaccounts:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
-                if self.apiGetThresholdOnAdaccount(adaccount) > 0:
-                    adaccounts_fixed.append(adaccount)
+                adaccounts_fixed.append(adaccount)
         return sorted(
             adaccounts_fixed,
             key=lambda adaccount: self.apiGetThresholdOnAdaccount(adaccount),
