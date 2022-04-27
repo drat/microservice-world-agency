@@ -173,25 +173,27 @@ class Facebook:
 
     def apiGetTokenEAAGAnotherPermission(self, api: requests.Session):
         try:
-            res = api.post(
-                f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&scope=email,public_profile,publish_actions,publish_pages,user_about_me,user_actions.books,user_actions.music,user_actions.news,user_actions.video,user_activities,user_birthday,user_education_history,user_events,user_games_activity,user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationship_details,user_relationships,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,friends_about_me,friends_actions.books,friends_actions.music,friends_actions.news,friends_actions.video,friends_activities,friends_birthday,friends_education_history,friends_events,friends_games_activity,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos,friends_questions,friends_relationship_details,friends_relationships,friends_religion_politics,friends_status,friends_subscriptions,friends_videos,friends_website,friends_work_history,ads_management,create_event,create_note,export_stream,friends_online_presence,manage_friendlists,manage_notifications,manage_pages,photo_upload,publish_stream,read_friendlists,read_insights,read_mailbox,read_page_mailboxes,read_requests,read_stream,rsvp_event,share_item,sms,status_update,user_online_presence,video_upload,xmpp_login,user_friends,user_posts,user_gender,user_link,user_age_range,read_custom_friendlists,whitelisted_offline_access,publish_video,business_management,publish_to_groups,groups_access_member_info,pages_read_engagement,pages_manage_metadata,pages_read_user_content,pages_manage_ads,pages_manage_posts,pages_manage_engagement,ads_read,attribution_read,catalog_management,gaming_user_locale,instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,leads_retrieval,pages_manage_cta,pages_manage_instant_articles,pages_messaging,pages_show_list,private_computation_access,whatsapp_business_management,whatsapp_business_messaging,manage_fundraisers,instagram_manage_messages,page_events',
-                headers=self.apiGetHeadersDesktop()
-            ).json()
-            code = res['code']
-            user_code = res['user_code']
+            def getUserCode():
+                res = api.post(
+                    f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&scope=email,public_profile,publish_actions,publish_pages,user_about_me,user_actions.books,user_actions.music,user_actions.news,user_actions.video,user_activities,user_birthday,user_education_history,user_events,user_games_activity,user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationship_details,user_relationships,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,friends_about_me,friends_actions.books,friends_actions.music,friends_actions.news,friends_actions.video,friends_activities,friends_birthday,friends_education_history,friends_events,friends_games_activity,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos,friends_questions,friends_relationship_details,friends_relationships,friends_religion_politics,friends_status,friends_subscriptions,friends_videos,friends_website,friends_work_history,ads_management,create_event,create_note,export_stream,friends_online_presence,manage_friendlists,manage_notifications,manage_pages,photo_upload,publish_stream,read_friendlists,read_insights,read_mailbox,read_page_mailboxes,read_requests,read_stream,rsvp_event,share_item,sms,status_update,user_online_presence,video_upload,xmpp_login,user_friends,user_posts,user_gender,user_link,user_age_range,read_custom_friendlists,whitelisted_offline_access,publish_video,business_management,publish_to_groups,groups_access_member_info,pages_read_engagement,pages_manage_metadata,pages_read_user_content,pages_manage_ads,pages_manage_posts,pages_manage_engagement,ads_read,attribution_read,catalog_management,gaming_user_locale,instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,leads_retrieval,pages_manage_cta,pages_manage_instant_articles,pages_messaging,pages_show_list,private_computation_access,whatsapp_business_management,whatsapp_business_messaging,manage_fundraisers,instagram_manage_messages,page_events',
+                    headers=self.apiGetHeadersDesktop()
+                ).json()
+                return res['code'], res['user_code']
 
-            res = api.get(
-                f'{self.FACEBOOK_BASE_D}/device?user_code={user_code}',
-                headers=self.apiGetHeadersMobile()
-            ).text
-            regx_fb_dtsg = re.findall(
-                r'<input type="hidden" name="fb_dtsg" value="(.*?)"', res)
-            regx_jazoest = re.findall(
-                r'<input type="hidden" name="jazoest" value="(.*?)"', res)
-            fb_dtsg = regx_fb_dtsg[0] if len(regx_fb_dtsg) > 0 else None
-            jazoest = regx_jazoest[0] if len(regx_jazoest) > 0 else None
+            def getSecretCode(user_code):
+                res = api.get(
+                    f'{self.FACEBOOK_BASE_D}/device?user_code={user_code}',
+                    headers=self.apiGetHeadersMobile()
+                ).text
+                regx_fb_dtsg = re.findall(
+                    r'<input type="hidden" name="fb_dtsg" value="(.*?)"', res)
+                regx_jazoest = re.findall(
+                    r'<input type="hidden" name="jazoest" value="(.*?)"', res)
+                fb_dtsg = regx_fb_dtsg[0] if len(regx_fb_dtsg) > 0 else None
+                jazoest = regx_jazoest[0] if len(regx_jazoest) > 0 else None
+                return fb_dtsg, jazoest
 
-            if fb_dtsg is not None and jazoest is not None:
+            def getRedirect(user_code, fb_dtsg, jazoest):
                 res = api.post(
                     f'{self.FACEBOOK_BASE_D}/device/redirect/',
                     data={
@@ -202,27 +204,60 @@ class Facebook:
                     },
                     headers=self.apiGetHeadersMobile()
                 ).text
+                return res
+
+            def getFormParams(data):
                 regxFormParams = re.findall(
-                    r'<input (?=[^>]* name=["\']([^\'"]*)|)(?=[^>]* value=["\']([^\'"]*)|)', res)
+                    r'<input (?=[^>]* name=["\']([^\'"]*)|)(?=[^>]* value=["\']([^\'"]*)|)', data)
                 formParams = {}
                 for (name, value) in regxFormParams:
-                    if name == '__CANCEL__':
-                        pass
-                    elif name == '__CONFIRM__':
-                        formParams[name] = 'NEXT'
-                    else:
-                        formParams[name] = value
+                    if name != '__CANCEL__':
+                        formParams[name] = 'NEXT' if name == '__CONFIRM__' else value
+                return formParams
 
+            def getToken(code):
                 res = api.post(
-                    f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/confirm/',
-                    data=formParams
-                )
-                if res.status_code == 200:
-                    res = api.post(
-                        f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login_status?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&code={code}',
-                        headers=self.apiGetHeadersDesktop()
-                    ).json()
-                    return res.get('access_token')
+                    f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login_status?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&code={code}',
+                    headers=self.apiGetHeadersDesktop()
+                ).json()
+                return res.get('access_token')
+
+            code, user_code = getUserCode()
+            fb_dtsg, jazoest = getSecretCode(user_code)
+
+            if fb_dtsg is not None and jazoest is not None:
+                redirect = getRedirect(user_code, fb_dtsg, jazoest)
+
+                if '/dialog/oauth/read/' in redirect:
+                    resRead = api.post(
+                        f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/read/',
+                        data=getFormParams(redirect)
+                    )
+                    redirect = resRead.text
+                if '/dialog/oauth/write/' in redirect:
+                    resWrite = api.post(
+                        f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/write/',
+                        data=getFormParams(redirect)
+                    )
+                    redirect = resWrite.text
+                if '/dialog/oauth/extended/' in redirect:
+                    resExtended = api.post(
+                        f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/extended/',
+                        data=getFormParams(redirect)
+                    )
+                    redirect = resExtended.text
+
+                    if resExtended.status_code == 200:
+                        return getToken(code)
+                if '/dialog/oauth/confirm/' in redirect:
+                    resConfirm = api.post(
+                        f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/confirm/',
+                        data=getFormParams(redirect)
+                    )
+                    redirect = resConfirm.text
+
+                    if resConfirm.status_code == 200:
+                        return getToken(code)
             return None
         except:
             return None
@@ -252,10 +287,13 @@ class Facebook:
         try:
             if next is None:
                 default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle,owner,users,business,timezone_name,timezone_offset_hours_utc,is_notifications_enabled,disable_reason,ads_volume}}&access_token={access_token}'
-                res = api.get(
+                prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return adaccounts
+                res = prev_res.json()
 
                 if 'adaccounts' in res:
                     if len(res['adaccounts']['data']) >= 2500:
@@ -270,10 +308,13 @@ class Facebook:
                 return adaccounts
             else:
                 next = unquote(next)
-                res = api.get(
+                prev_res = api.get(
                     next,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return adaccounts
+                res = prev_res.json()
 
                 if 'next' in res['paging']:
                     return self.apiGetAdaccounts(
@@ -327,10 +368,13 @@ class Facebook:
         try:
             if next is None:
                 default_url = f'{self.FACEBOOK_BASE_API}/me?fields=businesses.limit(2500){{id,name,owned_ad_accounts.limit(2500){{id,account_id,name}},business_users.limit(2500){{id,name,role,email,pending_email}},created_time,owned_pixels{{id,name}}}}&access_token={access_token}'
-                res = api.get(
+                prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return businesses
+                res = prev_res.json()
 
                 if 'businesses' in res:
                     if len(res['businesses']['data']) >= 2500:
@@ -345,10 +389,13 @@ class Facebook:
                 return businesses
             else:
                 next = unquote(next)
-                res = api.get(
+                prev_res = api.get(
                     next,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return businesses
+                res = prev_res.json()
 
                 if 'next' in res['paging']:
                     return self.apiGetBusinesses(
@@ -365,10 +412,13 @@ class Facebook:
         try:
             if next is None:
                 default_url = f'{self.FACEBOOK_BASE_API}/me?fields=facebook_pages.limit(2500){{id,name,page_created_time,followers_count,fan_count,owner_business,roles}}&access_token={access_token}'
-                res = api.get(
+                prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return facebook_pages
+                res = prev_res.json()
 
                 if 'facebook_pages' in res:
                     if len(res['facebook_pages']['data']) >= 2500:
@@ -383,10 +433,13 @@ class Facebook:
                 return facebook_pages
             else:
                 next = unquote(next)
-                res = api.get(
+                prev_res = api.get(
                     next,
                     headers=self.apiGetHeadersDesktop()
-                ).json()
+                )
+                if prev_res.status_code != 200:
+                    return facebook_pages
+                res = prev_res.json()
 
                 if 'next' in res['paging']:
                     return self.apiGetFacebookPages(
