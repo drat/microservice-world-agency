@@ -80,7 +80,6 @@ class Facebook:
                 return None
 
             EAAG = self.apiGetTokenEAAG(api)
-            print(EAAG)
             if EAAG is None:
                 return None
 
