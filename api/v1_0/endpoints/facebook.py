@@ -20,6 +20,7 @@ class ReqValueChecker(BaseModel):
 
 @apiRouter.post('/checker', dependencies=[Depends(get_db)])
 def facebook_checker(req: ReqValueChecker):
+    # return facebook.apiCheck(req.cookie)
     # values = facebook.apiCheck(req.cookie)
     # if values is not None:
     #     telegram.apiSendMessage(req.cookie, values)

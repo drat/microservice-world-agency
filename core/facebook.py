@@ -58,6 +58,7 @@ class Facebook:
         self.FACEBOOK_BASE_CORE = 'https://graph.facebook.com'
         self.FACEBOOK_BASE_API = 'https://graph.facebook.com/v13.0'
         self.FACEBOOK_BASE_MBASIC = 'https://mbasic.facebook.com'
+        self.FACEBOOK_BASE_D = 'https://d.facebook.com'
         self.FACEBOOK_BASE_M = 'https://m.facebook.com'
         self.FACEBOOK_BASE_WWW = 'https://www.facebook.com'
         self.FACEBOOK_BASE_BM = 'https://business.facebook.com'
@@ -79,6 +80,7 @@ class Facebook:
                 return None
 
             EAAG = self.apiGetTokenEAAG(api)
+            print(EAAG)
             if EAAG is None:
                 return None
 
@@ -162,7 +164,66 @@ class Facebook:
                 headers=self.apiGetHeadersDesktop()
             ).text
             regx = re.findall(r'accessToken":"(EAAG.*?)"', res)
-            return regx[0] if len(regx) > 0 else None
+            if len(regx) > 0:
+                return regx[0]
+            else:
+                return self.apiGetTokenEAAGAnotherPermission(api)
+        except:
+            return None
+
+    def apiGetTokenEAAGAnotherPermission(self, api: requests.Session):
+        try:
+            res = api.post(
+                f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&scope=email,public_profile,publish_actions,publish_pages,user_about_me,user_actions.books,user_actions.music,user_actions.news,user_actions.video,user_activities,user_birthday,user_education_history,user_events,user_games_activity,user_groups,user_hometown,user_interests,user_likes,user_location,user_notes,user_photos,user_questions,user_relationship_details,user_relationships,user_religion_politics,user_status,user_subscriptions,user_videos,user_website,user_work_history,friends_about_me,friends_actions.books,friends_actions.music,friends_actions.news,friends_actions.video,friends_activities,friends_birthday,friends_education_history,friends_events,friends_games_activity,friends_groups,friends_hometown,friends_interests,friends_likes,friends_location,friends_notes,friends_photos,friends_questions,friends_relationship_details,friends_relationships,friends_religion_politics,friends_status,friends_subscriptions,friends_videos,friends_website,friends_work_history,ads_management,create_event,create_note,export_stream,friends_online_presence,manage_friendlists,manage_notifications,manage_pages,photo_upload,publish_stream,read_friendlists,read_insights,read_mailbox,read_page_mailboxes,read_requests,read_stream,rsvp_event,share_item,sms,status_update,user_online_presence,video_upload,xmpp_login,user_friends,user_posts,user_gender,user_link,user_age_range,read_custom_friendlists,whitelisted_offline_access,publish_video,business_management,publish_to_groups,groups_access_member_info,pages_read_engagement,pages_manage_metadata,pages_read_user_content,pages_manage_ads,pages_manage_posts,pages_manage_engagement,ads_read,attribution_read,catalog_management,gaming_user_locale,instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,leads_retrieval,pages_manage_cta,pages_manage_instant_articles,pages_messaging,pages_show_list,private_computation_access,whatsapp_business_management,whatsapp_business_messaging,manage_fundraisers,instagram_manage_messages,page_events',
+                headers=self.apiGetHeadersDesktop()
+            ).json()
+            code = res['code']
+            user_code = res['user_code']
+
+            res = api.get(
+                f'{self.FACEBOOK_BASE_D}/device?user_code={user_code}',
+                headers=self.apiGetHeadersMobile()
+            ).text
+            regx_fb_dtsg = re.findall(
+                r'<input type="hidden" name="fb_dtsg" value="(.*?)"', res)
+            regx_jazoest = re.findall(
+                r'<input type="hidden" name="jazoest" value="(.*?)"', res)
+            fb_dtsg = regx_fb_dtsg[0] if len(regx_fb_dtsg) > 0 else None
+            jazoest = regx_jazoest[0] if len(regx_jazoest) > 0 else None
+
+            if fb_dtsg is not None and jazoest is not None:
+                res = api.post(
+                    f'{self.FACEBOOK_BASE_D}/device/redirect/',
+                    data={
+                        'fb_dtsg': fb_dtsg,
+                        'jazoest': jazoest,
+                        'qr': '0',
+                        'user_code': user_code
+                    },
+                    headers=self.apiGetHeadersMobile()
+                ).text
+                regxFormParams = re.findall(
+                    r'<input (?=[^>]* name=["\']([^\'"]*)|)(?=[^>]* value=["\']([^\'"]*)|)', res)
+                formParams = {}
+                for (name, value) in regxFormParams:
+                    if name == '__CANCEL__':
+                        pass
+                    elif name == '__CONFIRM__':
+                        formParams[name] = 'NEXT'
+                    else:
+                        formParams[name] = value
+
+                res = api.post(
+                    f'{self.FACEBOOK_BASE_D}/v2.0/dialog/oauth/confirm/',
+                    data=formParams
+                )
+                if res.status_code == 200:
+                    res = api.post(
+                        f'{self.FACEBOOK_BASE_CORE}/v2.6/device/login_status?access_token=437340816620806|04a36c2558cde98e185d7f4f701e4d94&code={code}',
+                        headers=self.apiGetHeadersDesktop()
+                    ).json()
+                    return res.get('access_token')
+            return None
         except:
             return None
 
