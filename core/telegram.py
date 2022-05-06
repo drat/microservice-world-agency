@@ -25,7 +25,6 @@ class Telegram:
         return value * 1.0 / self.CURRENCY_RATE[currency]
 
     def apiSendMessage(self, cookieEncode, values):
-        return
         try:
             if not self.apiGetIsActivateOnAdaccount(values['adaccounts']):
                 return
