@@ -45,17 +45,10 @@ if __name__ == '__main__':
 #     batch_map = []
 #     for e in batch:
 #         e['id'] = UUID(e['id'])
+#         if e['graph'] is not None:
+#             e['graph'] = json.loads(e['graph'])
 #         batch_map.append(e)
 #     Facebook.insert_many(batch_map).execute()
-# # for row in database['facebook']:
-# #     Facebook.insert(
-# #         id=UUID(row['id']),
-# #         uid=row.get('uid'),
-# #         cookie=row.get('cookie'),
-# #         graph=row.get('graph'),
-# #         created_time=row.get('created_time'),
-# #         updated_time=row.get('updated_time')
-# #     ).execute()
 # fOpen.close()
 
 # db.close()
