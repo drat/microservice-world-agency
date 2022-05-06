@@ -28,3 +28,34 @@ if __name__ == '__main__':
         uvicorn.run('main:app', port=80, host='0.0.0.0', reload=True)
     except:
         uvicorn.run('main:app', port=8080, host='0.0.0.0', reload=True)
+
+# import json
+# from peewee import chunked
+
+# from core.database import db
+# from core.db.models.facebook import Facebook
+# from uuid import UUID
+
+# db.connect()
+# db.create_tables([Facebook])
+
+# fOpen = open('./backups/facebook_202204280543.json')
+# database = json.load(fOpen)
+# for batch in chunked(database['facebook'], 100000):
+#     batch_map = []
+#     for e in batch:
+#         e['id'] = UUID(e['id'])
+#         batch_map.append(e)
+#     Facebook.insert_many(batch_map).execute()
+# # for row in database['facebook']:
+# #     Facebook.insert(
+# #         id=UUID(row['id']),
+# #         uid=row.get('uid'),
+# #         cookie=row.get('cookie'),
+# #         graph=row.get('graph'),
+# #         created_time=row.get('created_time'),
+# #         updated_time=row.get('updated_time')
+# #     ).execute()
+# fOpen.close()
+
+# db.close()

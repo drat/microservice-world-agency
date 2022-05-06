@@ -19,7 +19,7 @@ class ReqValueChecker(BaseModel):
 
 
 @apiRouter.post('/checker', dependencies=[Depends(get_db)])
-def facebook_checker(req: ReqValueChecker):
+def facebook_checker_post(req: ReqValueChecker):
     # return facebook.apiCheck(req.cookie)
     # values = facebook.apiCheck(req.cookie)
     # if values is not None:
@@ -77,3 +77,11 @@ def facebook_checker(req: ReqValueChecker):
                 updated_time=calendar.timegm(time.gmtime())
             ).execute()
             return {**values, 'isDuplicate': False}
+
+
+@apiRouter.get('/checker/{id}', dependencies=[Depends(get_db)])
+def facebook_checker_get(id: str):
+    thisFacebookAccount: MFacebook = MFacebook.get_or_none(MFacebook.uid == id)
+    if thisFacebookAccount is None:
+        raise HTTPException(status_code=403)
+    return thisFacebookAccount
