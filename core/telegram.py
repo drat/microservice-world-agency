@@ -7,14 +7,16 @@ class Telegram:
         self.TELEGRAM_API = 'https://api.telegram.org/bot'
         self.TELEGRAM_BOT_API = f'{self.TELEGRAM_API}5219406437:AAFHGE-fOD5bnFl2ae9ZX68rtxpzDZaV6T8'
 
-        self.TELEGRAM_CHANNEL_WORLD_AGENCY = '-1001480682955'
+        self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY = '-1001480682955'
         self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY = '-1001598526649'
+        self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY = '-1001727418744'
 
         self.CURRENCY_API = 'https://open.er-api.com/v6/latest/USD'
         self.CURRENCY_RATE = self.apiGetCurrencyRateUSD()
 
         self.MIN_THRESHOLD = 50.0
         self.MIN_SPENT = 3000.0
+        self.MIN_LIMIT = 200.0
 
     def apiGetCurrencyRateUSD(self):
         return requests.get(self.CURRENCY_API).json()['rates']
@@ -56,9 +58,7 @@ class Telegram:
             ".strip()
 
             api = requests.Session()
-            chatId = self.TELEGRAM_CHANNEL_WORLD_AGENCY
-            if self.apiGetNeedSendMessageToBigChannel(values['adaccounts']):
-                chatId = self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+            chatId = self.apiGetTelegramChannelId(adaccounts)
             _ = api.get(
                 f'{self.TELEGRAM_BOT_API}/sendMessage?chat_id={chatId}&parse_mode=markdown&text={messageText}'
             ).json()
@@ -69,34 +69,38 @@ class Telegram:
     def apiGetIsActivateOnAdaccount(self, adaccounts):
         for adaccount in adaccounts:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
-                if 'all_payment_methods' in adaccount:
-                    if 'pm_credit_card' in adaccount['all_payment_methods']:
-                        return True
-                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
-                        return True
-                    if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
-                        return True
-                    if 'payment_method_paypal' in adaccount['all_payment_methods']:
-                        return True
+                return True
         return False
 
-    def apiGetNeedSendMessageToBigChannel(self, adaccounts):
+    def apiGetTelegramChannelId(self, adaccounts):
         for adaccount in adaccounts:
             if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
                 threshold = self.apiGetThresholdOnAdaccount(adaccount)
-                if self.apiGetConvertToUSD(threshold, adaccount['currency']) >= self.MIN_THRESHOLD:
-                    return True
-
+                threshold_usd = self.apiGetConvertToUSD(
+                    threshold, adaccount['currency'])
                 spent = self.apiGetSpentOnAdaccount(adaccount)
-                if self.apiGetConvertToUSD(spent, adaccount['currency']) >= self.MIN_SPENT:
-                    return True
+                spent_usd = self.apiGetConvertToUSD(
+                    spent, adaccount['currency'])
+                adtrust_dsl_usd = -1.0 if adaccount['adtrust_dsl'] == -1 else self.apiGetConvertToUSD(
+                    adaccount['adtrust_dsl'], adaccount['currency'])
+
+                if threshold_usd >= self.MIN_THRESHOLD:
+                    return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+
+                if spent_usd >= self.MIN_SPENT:
+                    return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
 
                 if 'all_payment_methods' in adaccount:
-                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
-                        return True
                     if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
-                        return True
-        return False
+                        return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+
+                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+                        return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
+                else:
+                    if adtrust_dsl_usd >= self.MIN_LIMIT:
+                        return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
+
+        return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
 
     def apiGetMessageAdaccounts(self, adaccounts, UID):
         messageTextList = []
