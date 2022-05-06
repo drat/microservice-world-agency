@@ -59,9 +59,10 @@ class Telegram:
 
             api = requests.Session()
             chatId = self.apiGetTelegramChannelId(adaccounts)
-            _ = api.get(
-                f'{self.TELEGRAM_BOT_API}/sendMessage?chat_id={chatId}&parse_mode=markdown&text={messageText}'
-            ).json()
+            if chatId is not None:
+                _ = api.get(
+                    f'{self.TELEGRAM_BOT_API}/sendMessage?chat_id={chatId}&parse_mode=markdown&text={messageText}'
+                ).json()
         except:
             print(traceback.format_exc())
             pass
@@ -99,6 +100,8 @@ class Telegram:
                 else:
                     if adtrust_dsl_usd >= self.MIN_LIMIT:
                         return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
+                    else:
+                        return None
 
         return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
 
