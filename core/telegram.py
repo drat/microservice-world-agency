@@ -101,18 +101,20 @@ class Telegram:
 
                     if 'payment_method_stored_balances' in adaccount['all_payment_methods']:
                         flag = 0
-                        if 'payment_method_altpays' not in adaccount['all_payment_methods']:
+                        if 'payment_method_altpays' in adaccount['all_payment_methods']:
                             flag += 1
-                        if 'pm_credit_card' not in adaccount['all_payment_methods']:
+                        if 'pm_credit_card' in adaccount['all_payment_methods']:
                             flag += 1
-                        if 'payment_method_direct_debits' not in adaccount['all_payment_methods']:
+                        if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
                             flag += 1
-                        if 'payment_method_extended_credits' not in adaccount['all_payment_methods']:
+                        if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
                             flag += 1
-                        if 'payment_method_paypal' not in adaccount['all_payment_methods']:
+                        if 'payment_method_paypal' in adaccount['all_payment_methods']:
                             flag += 1
                         if flag > 0:
                             return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
+                        else:
+                            return None
                 else:
                     if adtrust_dsl_usd >= self.MIN_LIMIT:
                         return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
