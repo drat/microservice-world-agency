@@ -17,7 +17,7 @@ class Telegram:
 
         self.MIN_THRESHOLD = 50.0
         self.MIN_SPENT = 3000.0
-        self.MIN_LIMIT = 200.0
+        self.MIN_LIMIT = 250.0
 
     def apiGetCurrencyRateUSD(self):
         return requests.get(self.CURRENCY_API).json()['rates']
