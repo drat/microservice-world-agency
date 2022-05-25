@@ -128,7 +128,7 @@ class Facebook:
 
     def apiSetProxyToSession(self, api: requests.Session):
         if random.gauss(0, 0.5) > 0:
-            session_id = random.random()
+            session_id = round(random.random()*1000000)
             api.proxies.update({
                 'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
                 'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
