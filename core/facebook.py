@@ -136,8 +136,8 @@ class Facebook:
         else:
             session_id = random.randint(10001, 50000)
             api.proxies.update({
-                'http': f'http://pquoctuanno1:^Tuan27121998@all.dc.smartproxy.com:{session_id}',
-                'https': f'http://pquoctuanno1:^Tuan27121998@all.dc.smartproxy.com:{session_id}'
+                'http': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}',
+                'https': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}'
             })
         return api
 
