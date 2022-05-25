@@ -127,11 +127,18 @@ class Facebook:
         return {'User-Agent': self.DEFAULT_USERAGENT_MOBILE}
 
     def apiSetProxyToSession(self, api: requests.Session):
-        session_id = random.random()
-        api.proxies.update({
-            'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
-            'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
-        })
+        if random.gauss(0, 0.5) > 0:
+            session_id = random.random()
+            api.proxies.update({
+                'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
+                'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
+            })
+        else:
+            session_id = random.randint(10001, 50000)
+            api.proxies.update({
+                'http': f'http://pquoctuanno1:^Tuan27121998@all.dc.smartproxy.com:{session_id}',
+                'https': f'http://pquoctuanno1:^Tuan27121998@all.dc.smartproxy.com:{session_id}'
+            })
         return api
 
     def apiGetTokenEAAI(self, api: requests.Session):
