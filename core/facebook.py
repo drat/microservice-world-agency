@@ -80,14 +80,13 @@ class Facebook:
                 return None
 
             EAAG = self.apiGetTokenEAAG(api)
-            if EAAG is None:
-                return None
 
-            sessions = self.apiGetSessions(api)
-            me = self.apiGetMe(api, EAAG)
+            sessions = []
+            me = self.apiGetMe(api, EAAI if EAAG is None else EAAG)
             adaccounts = self.apiGetAdaccountsMapping(api, EAAI, fbUID)
-            businesses = self.apiGetBusinesses(api, EAAG)
-            pages = self.apiGetFacebookPages(api, EAAG)
+            businesses = [] if EAAG is None else self.apiGetBusinesses(
+                api, EAAG)
+            pages = [] if EAAG is None else self.apiGetFacebookPages(api, EAAG)
 
             return {
                 'EAAI': EAAI,
