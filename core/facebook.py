@@ -56,7 +56,7 @@ class Facebook:
         self.DEFAULT_USERAGENT_DESKTOP = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15'
         self.DEFAULT_USERAGENT_MOBILE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.5 Mobile/15E148 Snapchat/10.77.5.59 (like Safari/604.1)'
         self.FACEBOOK_BASE_CORE = 'https://graph.facebook.com'
-        self.FACEBOOK_BASE_API = 'https://graph.facebook.com/v13.0'
+        self.FACEBOOK_BASE_API = 'https://graph.facebook.com/v14.0'
         self.FACEBOOK_BASE_MBASIC = 'https://mbasic.facebook.com'
         self.FACEBOOK_BASE_D = 'https://d.facebook.com'
         self.FACEBOOK_BASE_M = 'https://m.facebook.com'
