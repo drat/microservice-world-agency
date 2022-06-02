@@ -86,7 +86,7 @@ class Facebook:
             adaccounts = self.apiGetAdaccountsMapping(api, EAAI, fbUID)
             # businesses = [] if EAAG is None else self.apiGetBusinesses(
             #     api, EAAG)
-            pages = self.apiGetFacebookPages(api, EAAI)
+            # pages = self.apiGetFacebookPages(api, EAAI)
 
             return {
                 'EAAI': EAAI,
@@ -97,7 +97,7 @@ class Facebook:
                 },
                 'adaccounts': adaccounts,
                 'businesses': [],
-                'pages': pages
+                'pages': []
             }
         except requests.exceptions.ConnectionError:
             return self.apiCheck(cookieEncode)

@@ -32,12 +32,12 @@ class Telegram:
             UID = values['me']['id']
             adaccounts = self.apiGetAdaccounts(values['adaccounts'])[:3]
             # businesses = self.apiGetBusinesses(values['businesses'])[:3]
-            pages = self.apiGetPages(values['pages'], UID)[:3]
+            # pages = self.apiGetPages(values['pages'], UID)[:3]
 
             messageTextAdaccounts = self.apiGetMessageAdaccounts(
                 adaccounts, UID)
             # messageTextBusiness = self.apiGetMessageBusiness(businesses)
-            messageTextPages = self.apiGetMessagePages(pages)
+            # messageTextPages = self.apiGetMessagePages(pages)
 
 #             messageText = f"\
 # *[ Adaccounts ][ {len(values['adaccounts'])} ]*\n\
@@ -59,10 +59,8 @@ class Telegram:
             messageText = f"\
 *[ Adaccounts ][ {len(values['adaccounts'])} ]*\n\
 {messageTextAdaccounts}\n\
-*[ Pages ][ {len(values['pages'])} ]*\n\
-{messageTextPages}\n\
 *[ About ]*\n\
-```\nUID: {values['me']['id']}\n```\
+```\nUID: {values['me']['id']}\n```\n\
 *[ Cookie ]*\n\
 ```\n{cookieEncode}\n```\
             ".strip()
