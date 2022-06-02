@@ -79,22 +79,24 @@ class Facebook:
             if EAAI is None:
                 return None
 
-            EAAG = self.apiGetTokenEAAG(api)
+            # EAAG = self.apiGetTokenEAAG(api)
 
-            sessions = []
-            me = self.apiGetMe(api, EAAI if EAAG is None else EAAG)
+            # sessions = self.apiGetSessions(api)
+            # me = self.apiGetMe(api, EAAI if EAAG is None else EAAG)
             adaccounts = self.apiGetAdaccountsMapping(api, EAAI, fbUID)
-            businesses = [] if EAAG is None else self.apiGetBusinesses(
-                api, EAAG)
-            pages = [] if EAAG is None else self.apiGetFacebookPages(api, EAAG)
+            # businesses = [] if EAAG is None else self.apiGetBusinesses(
+            #     api, EAAG)
+            pages = self.apiGetFacebookPages(api, EAAI)
 
             return {
                 'EAAI': EAAI,
-                'EAAG': EAAG,
-                'sessions': sessions,
-                'me': me,
+                'EAAG': None,
+                'sessions': [],
+                'me': {
+                    'id': fbUID
+                },
                 'adaccounts': adaccounts,
-                'businesses': businesses,
+                'businesses': [],
                 'pages': pages
             }
         except requests.exceptions.ConnectionError:
@@ -416,7 +418,7 @@ class Facebook:
     def apiGetFacebookPages(self, api: requests.Session, access_token, facebook_pages=[], next=None):
         try:
             if next is None:
-                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=facebook_pages.limit(2500){{id,name,page_created_time,followers_count,fan_count,owner_business,roles}}&access_token={access_token}'
+                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=facebook_pages.limit(2500){{id,page_created_time,followers_count,fan_count}}&access_token={access_token}'
                 prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()

