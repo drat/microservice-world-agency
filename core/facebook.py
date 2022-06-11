@@ -100,6 +100,7 @@ class Facebook:
                 'pages': []
             }
         except requests.exceptions.ConnectionError:
+            print(traceback.format_exc())
             return self.apiCheck(cookieEncode)
         except:
             print(traceback.format_exc())
