@@ -106,7 +106,7 @@ class Facebook:
             return None
 
     def apiDecodeBase64(self, encode):
-        return base64.b64decode(encode.encode('utf-8')).decode('utf-8')
+        return base64.b64decode(encode.replace('\r', '').replace('\n', '').encode('utf-8')).decode('utf-8')
 
     def apiChunks(self, lst, n):
         return [lst[i:i + n] for i in range(0, len(lst), n)]
