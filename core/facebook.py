@@ -142,10 +142,10 @@ class Facebook:
         #         'https': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}'
         #     })
 
-        session_id = random.randint(10001, 50000)
+        session_id = round(random.random()*1000000)
         api.proxies.update({
-            'http': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}',
-            'https': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}'
+            'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-us-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
+            'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-us-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
         })
         return api
 
