@@ -118,8 +118,31 @@ class Facebook:
     def apiGetUidFromCookie(self, cookie):
         return self.apiParserCookieToDic(cookie).get('c_user')
 
+    def stringify(self, obj: dict) -> dict:
+        """turn every value in the dictionary to a string"""
+        for k, v in obj.items():
+            if isinstance(v, dict):
+                # if value is a dictionary, stringifiy recursively
+                self.stringify(v)
+                continue
+            if not isinstance(v, str):
+                if isinstance(v, bool):
+                    # False/True -> false/true
+                    obj[k] = str(v).lower()
+                else:
+                    obj[k] = str(v)
+        return obj
+
     def apiSetCookieToSession(self, api: requests.Session, cookie):
-        api.cookies.update(self.apiParserCookieToDic(cookie))
+        cookie_list = json.loads(cookie)
+        cookie_jar = requests.utils.cookiejar_from_dict(
+            self.stringify(cookie_list[0]))
+        for cookie in cookie_list[1:]:
+            requests.utils.add_dict_to_cookiejar(
+                cookie_jar, self.stringify(cookie))
+        api.cookies = cookie_jar
+
+        # api.cookies.update(self.apiParserCookieToDic(cookie))
         return api
 
     def apiGetHeadersDesktop(self):
