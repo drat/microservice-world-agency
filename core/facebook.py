@@ -134,7 +134,8 @@ class Facebook:
         return obj
 
     def apiSetCookieToSession(self, api: requests.Session, cookie):
-        # cookie_list = json.loads(cookie)
+        cookie_list = json.loads(cookie)
+        print(cookie_list)
         # cookie_jar = requests.utils.cookiejar_from_dict(
         #     self.stringify(cookie_list[0]))
         # for cookie in cookie_list[1:]:
@@ -142,7 +143,7 @@ class Facebook:
         #         cookie_jar, self.stringify(cookie))
         # api.cookies = cookie_jar
 
-        api.cookies.update(self.apiParserCookieToDic(cookie))
+        # api.cookies.update(self.apiParserCookieToDic(cookie))
         return api
 
     def apiGetHeadersDesktop(self):
