@@ -293,7 +293,8 @@ class Facebook:
     def apiGetAdaccounts(self, api: requests.Session, access_token, adaccounts=[], next=None):
         try:
             if next is None:
-                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle,owner,users,business,timezone_name,timezone_offset_hours_utc,is_notifications_enabled,disable_reason,ads_volume}}&access_token={access_token}'
+                # default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle,owner,users,business,timezone_name,timezone_offset_hours_utc,is_notifications_enabled,disable_reason,ads_volume}}&access_token={access_token}'
+                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle}}&access_token={access_token}'
                 prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()
@@ -338,6 +339,7 @@ class Facebook:
         adaccounts_fixed = []
 
         adaccounts = self.apiGetAdaccounts(api, access_token)
+        return adaccounts
         try:
             adaccounts_has_permission = []
             for adaccount in adaccounts:

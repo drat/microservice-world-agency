@@ -93,47 +93,79 @@ class Telegram:
                 adtrust_dsl_usd = -1.0 if adaccount['adtrust_dsl'] == -1 else self.apiGetConvertToUSD(
                     adaccount['adtrust_dsl'], adaccount['currency'])
 
-                if threshold_usd >= self.MIN_THRESHOLD:
-                    return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
-
                 if spent_usd >= self.MIN_SPENT:
                     return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
 
-                if 'all_payment_methods' in adaccount:
-                    if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+                if threshold_usd > 1.0:
+                    if threshold_usd >= self.MIN_THRESHOLD:
                         return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
-
-                    if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+                    else:
                         return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
-
-                    if 'payment_method_stored_balances' in adaccount['all_payment_methods']:
-                        flag = 0
-                        if 'payment_method_altpays' in adaccount['all_payment_methods']:
-                            flag += 1
-                        if 'pm_credit_card' in adaccount['all_payment_methods']:
-                            flag += 1
-                        if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
-                            flag += 1
-                        if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
-                            flag += 1
-                        if 'payment_method_paypal' in adaccount['all_payment_methods']:
-                            flag += 1
-                        if flag > 0:
-                            return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
-                        else:
-                            return None
                 else:
-                    if adtrust_dsl_usd >= self.MIN_LIMIT:
+                    if adtrust_dsl_usd == -1.0 or adtrust_dsl_usd >= self.MIN_LIMIT:
                         return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
                     else:
                         return None
 
+            # if self.apiGetAccountStatusOnAdaccount(adaccount) == 'ACTIVE':
+            #     threshold = self.apiGetThresholdOnAdaccount(adaccount)
+            #     threshold_usd = self.apiGetConvertToUSD(
+            #         threshold, adaccount['currency'])
+            #     spent = self.apiGetSpentOnAdaccount(adaccount)
+            #     spent_usd = self.apiGetConvertToUSD(
+            #         spent, adaccount['currency'])
+            #     adtrust_dsl_usd = -1.0 if adaccount['adtrust_dsl'] == -1 else self.apiGetConvertToUSD(
+            #         adaccount['adtrust_dsl'], adaccount['currency'])
+
+            #     if threshold_usd >= self.MIN_THRESHOLD:
+            #         return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+
+            #     if spent_usd >= self.MIN_SPENT:
+            #         return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+
+            #     if 'all_payment_methods' in adaccount:
+            #         if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+            #             return self.TELEGRAM_CHANNEL_BIG_WORLD_AGENCY
+
+            #         if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+            #             return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
+
+            #         if 'payment_method_stored_balances' in adaccount['all_payment_methods']:
+            #             flag = 0
+            #             if 'payment_method_altpays' in adaccount['all_payment_methods']:
+            #                 flag += 1
+            #             if 'pm_credit_card' in adaccount['all_payment_methods']:
+            #                 flag += 1
+            #             if 'payment_method_direct_debits' in adaccount['all_payment_methods']:
+            #                 flag += 1
+            #             if 'payment_method_extended_credits' in adaccount['all_payment_methods']:
+            #                 flag += 1
+            #             if 'payment_method_paypal' in adaccount['all_payment_methods']:
+            #                 flag += 1
+            #             if flag > 0:
+            #                 return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
+            #             else:
+            #                 return None
+            #     else:
+            #         if adtrust_dsl_usd >= self.MIN_LIMIT:
+            #             return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
+            #         else:
+            #             return None
+
         return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
 
     def apiGetMessageAdaccounts(self, adaccounts, UID):
+        # messageTextList = []
+        # for adaccount in adaccounts:
+        #     lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}, Role: {self.apiGetRoleOnAdaccount(adaccount, UID)}, Business: {self.apiGetBusinessOnAdaccount(adaccount)}, Users: {self.apiGetUsersOnAdaccount(adaccount)}, Ads Running: {self.apiGetAdsVolumeOnAdaccount(adaccount)}, Notifications: {self.apiGetNotificationsOnAdaccount(adaccount)}]\n```"
+        #     lineTwo = f"```\n{self.apiGetPaymentsOnAdaccount(adaccount)}\n```"
+        #     messageTextList.append(
+        #         f"{lineOne}{lineTwo}"
+        #     )
+        # return '\n'.join(messageTextList)
         messageTextList = []
         for adaccount in adaccounts:
-            lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}, Role: {self.apiGetRoleOnAdaccount(adaccount, UID)}, Business: {self.apiGetBusinessOnAdaccount(adaccount)}, Users: {self.apiGetUsersOnAdaccount(adaccount)}, Ads Running: {self.apiGetAdsVolumeOnAdaccount(adaccount)}, Notifications: {self.apiGetNotificationsOnAdaccount(adaccount)}]\n```"
+            lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}]\n```"
             lineTwo = f"```\n{self.apiGetPaymentsOnAdaccount(adaccount)}\n```"
             messageTextList.append(
                 f"{lineOne}{lineTwo}"
