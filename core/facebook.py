@@ -43,6 +43,7 @@
 # }
 
 import traceback
+from unicodedata import name
 from urllib.parse import unquote
 import base64
 import json
@@ -136,7 +137,27 @@ class Facebook:
     def apiSetCookieToSession(self, api: requests.Session, cookie):
         cookie_list = json.loads(cookie)
         for cookie in cookie_list:
-            c = requests.cookies.create_cookie(**cookie)
+            required_args = {
+                'name': cookie['name'],
+                'value': cookie['value']
+            }
+            optional_args = {
+                "version": 0,
+                "port": None,
+                "domain": cookie['domain'],
+                "path": cookie['path'],
+                "secure": cookie['secure'],
+                "expires": cookie['expirationDate'],
+                "discard": True,
+                "comment": None,
+                "comment_url": None,
+                "rest": {"HttpOnly": cookie['httpOnly']},
+                "rfc2109": False,
+            }
+            c = requests.cookies.create_cookie(
+                **required_args,
+                **optional_args,
+            )
             api.cookies.set_cookie(c)
 
         # api.cookies.update(self.apiParserCookieToDic(cookie))
