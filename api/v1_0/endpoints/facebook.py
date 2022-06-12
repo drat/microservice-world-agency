@@ -32,7 +32,7 @@ def facebook_checker_post(req: ReqValueChecker):
         thisFacebookAccountCookie = facebook.apiParserCookieToDic(
             thisFacebookAccount.cookie
         )
-        if cookieDic['xs'] == thisFacebookAccountCookie['xs']:
+        if cookieDic['xs'] != thisFacebookAccountCookie['xs']:
             if thisFacebookAccount.graph is None:
                 raise HTTPException(status_code=403)
             else:
