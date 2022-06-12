@@ -135,18 +135,9 @@ class Facebook:
 
     def apiSetCookieToSession(self, api: requests.Session, cookie):
         cookie_list = json.loads(cookie)
-        print(
-            cookie_list
-        )
-        # cookie_jar = requests.utils.cookiejar_from_dict(
-        #     self.stringify(cookie_list[0]))
-        # for cookie in cookie_list[1:]:
-        #     requests.utils.add_dict_to_cookiejar(
-        #         cookie_jar, self.stringify(cookie))
-        # api.cookies = cookie_jar
-        # print(
-        #     requests.utils.dict_from_cookiejar(api.cookies)
-        # )
+        for cookie in cookie_list:
+            c = requests.cookies.create_cookie(**cookie)
+            api.cookies.set_cookie(c)
 
         # api.cookies.update(self.apiParserCookieToDic(cookie))
         return api
