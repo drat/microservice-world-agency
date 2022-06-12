@@ -185,8 +185,8 @@ class Facebook:
 
         session_id = round(random.random()*1000000)
         api.proxies.update({
-            'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-us-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
-            'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-us-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
+            'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-uk-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
+            'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-uk-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
         })
         return api
 
