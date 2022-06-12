@@ -140,8 +140,10 @@ class Facebook:
         for cookie in cookie_list[1:]:
             requests.utils.add_dict_to_cookiejar(
                 cookie_jar, self.stringify(cookie))
-            print(cookie_jar)
         api.cookies = cookie_jar
+        print(
+            requests.utils.dict_from_cookiejar(api.cookies)
+        )
 
         # api.cookies.update(self.apiParserCookieToDic(cookie))
         return api
