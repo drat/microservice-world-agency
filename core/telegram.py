@@ -102,7 +102,7 @@ class Telegram:
                     else:
                         return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
                 else:
-                    if adtrust_dsl_usd == -1.0 or adtrust_dsl_usd >= self.MIN_LIMIT:
+                    if adtrust_dsl_usd >= self.MIN_LIMIT:
                         return self.TELEGRAM_CHANNEL_TRASH_WORLD_AGENCY
                     else:
                         return None

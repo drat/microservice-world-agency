@@ -43,7 +43,7 @@
 # }
 
 import traceback
-from unicodedata import name
+import time
 from urllib.parse import unquote
 import base64
 import json
@@ -54,7 +54,7 @@ import requests
 
 class Facebook:
     def __init__(self):
-        self.DEFAULT_USERAGENT_DESKTOP = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15'
+        self.DEFAULT_USERAGENT_DESKTOP = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.38 Safari/537.36 Brave/75'
         self.DEFAULT_USERAGENT_MOBILE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.5 Mobile/15E148 Snapchat/10.77.5.59 (like Safari/604.1)'
         self.FACEBOOK_BASE_CORE = 'https://graph.facebook.com'
         self.FACEBOOK_BASE_API = 'https://graph.facebook.com/v14.0'
@@ -75,6 +75,12 @@ class Facebook:
             fbUID = self.apiGetUidFromCookie(cookie)
             if fbUID is None:
                 return None
+
+            _ = api.get(
+                f'{self.FACEBOOK_BASE_WWW}/me',
+                headers=self.apiGetHeadersDesktop()
+            ).text
+            time.sleep(15)
 
             EAAI = self.apiGetTokenEAAI(api)
             if EAAI is None:
