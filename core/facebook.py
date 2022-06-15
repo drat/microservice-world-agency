@@ -80,7 +80,7 @@ class Facebook:
                 f'{self.FACEBOOK_BASE_WWW}/me',
                 headers=self.apiGetHeadersDesktop()
             ).text
-            time.sleep(15)
+            time.sleep(3)
 
             EAAI = self.apiGetTokenEAAI(api)
             if EAAI is None:
