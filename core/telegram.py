@@ -161,22 +161,22 @@ class Telegram:
         return self.TELEGRAM_CHANNEL_SMALL_WORLD_AGENCY
 
     def apiGetMessageAdaccounts(self, adaccounts, UID):
-        messageTextList = []
-        for adaccount in adaccounts:
-            lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}, Role: {self.apiGetRoleOnAdaccount(adaccount, UID)}, Business: {self.apiGetBusinessOnAdaccount(adaccount)}, Users: {self.apiGetUsersOnAdaccount(adaccount)}, Ads Running: {self.apiGetAdsVolumeOnAdaccount(adaccount)}, Notifications: {self.apiGetNotificationsOnAdaccount(adaccount)}]\n```"
-            lineTwo = f"```\n{self.apiGetPaymentsOnAdaccount(adaccount)}\n```"
-            messageTextList.append(
-                f"{lineOne}{lineTwo}"
-            )
-        return '\n'.join(messageTextList)
         # messageTextList = []
         # for adaccount in adaccounts:
-        #     lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}]\n```"
+        #     lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}, Role: {self.apiGetRoleOnAdaccount(adaccount, UID)}, Business: {self.apiGetBusinessOnAdaccount(adaccount)}, Users: {self.apiGetUsersOnAdaccount(adaccount)}, Ads Running: {self.apiGetAdsVolumeOnAdaccount(adaccount)}, Notifications: {self.apiGetNotificationsOnAdaccount(adaccount)}]\n```"
         #     lineTwo = f"```\n{self.apiGetPaymentsOnAdaccount(adaccount)}\n```"
         #     messageTextList.append(
         #         f"{lineOne}{lineTwo}"
         #     )
         # return '\n'.join(messageTextList)
+        messageTextList = []
+        for adaccount in adaccounts:
+            lineOne = f"```\n[{self.apiGetAccountStatusOnAdaccount(adaccount)}][Threshold: {self.apiGetThresholdOnAdaccount(adaccount)} {adaccount['currency']}, Spent: {self.apiGetSpentOnAdaccount(adaccount)} {adaccount['currency']}, Balance: {self.apiGetBalanceOnAdaccount(adaccount)} {adaccount['currency']}, Limit/Day: {adaccount['adtrust_dsl']} {adaccount['currency']}] => [Id: {adaccount['account_id']}]\n```"
+            lineTwo = f"```\n{self.apiGetPaymentsOnAdaccount(adaccount)}\n```"
+            messageTextList.append(
+                f"{lineOne}{lineTwo}"
+            )
+        return '\n'.join(messageTextList)
 
     def apiGetMessageBusiness(self, businesses):
         messageTextList = []

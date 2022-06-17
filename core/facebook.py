@@ -69,13 +69,13 @@ class Facebook:
             cookie = self.apiDecodeBase64(cookieEncode)
 
             api = requests.Session()
-            api = self.apiSetProxyToSession(api)
             api = self.apiSetCookieToSession(api, cookie)
 
             fbUID = self.apiGetUidFromCookie(cookie)
             if fbUID is None:
                 return None
 
+            api = self.apiSetProxyToSession(api, fbUID)
             _ = api.get(
                 f'{self.FACEBOOK_BASE_WWW}/me',
                 headers=self.apiGetHeadersDesktop()
@@ -174,7 +174,7 @@ class Facebook:
     def apiGetHeadersMobile(self):
         return {'User-Agent': self.DEFAULT_USERAGENT_MOBILE}
 
-    def apiSetProxyToSession(self, api: requests.Session):
+    def apiSetProxyToSession(self, api: requests.Session, UID):
         # if random.gauss(0, 0.5) > 0:
         #     session_id = round(random.random()*1000000)
         #     api.proxies.update({
@@ -188,7 +188,7 @@ class Facebook:
         #         'https': f'http://user-pquoctuanno1:Tuan27121998@all.dc.smartproxy.com:{session_id}'
         #     })
 
-        session_id = round(random.random()*1000000)
+        session_id = f'{round(random.random()*1000000)}{UID}'
         api.proxies.update({
             'http': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-uk-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225',
             'https': f'http://lum-customer-hl_ab3d1e44-zone-checker-country-uk-session-{session_id}:4sinqp2g8704@zproxy.lum-superproxy.io:22225'
@@ -346,8 +346,8 @@ class Facebook:
     def apiGetAdaccounts(self, api: requests.Session, access_token, adaccounts=[], next=None):
         try:
             if next is None:
-                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle,owner,users,business,timezone_name,timezone_offset_hours_utc,is_notifications_enabled,disable_reason,ads_volume}}&access_token={access_token}'
-                # default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle}}&access_token={access_token}'
+                # default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle,owner,users,business,timezone_name,timezone_offset_hours_utc,is_notifications_enabled,disable_reason,ads_volume}}&access_token={access_token}'
+                default_url = f'{self.FACEBOOK_BASE_API}/me?fields=adaccounts.limit(2500){{account_id,id,name,account_status,currency,balance,amount_spent,adtrust_dsl,adspaymentcycle}}&access_token={access_token}'
                 prev_res = api.get(
                     default_url,
                     headers=self.apiGetHeadersDesktop()
@@ -392,7 +392,7 @@ class Facebook:
         adaccounts_fixed = []
 
         adaccounts = self.apiGetAdaccounts(api, access_token)
-        # return adaccounts
+        return adaccounts
         try:
             adaccounts_has_permission = []
             for adaccount in adaccounts:
