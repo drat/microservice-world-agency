@@ -80,11 +80,12 @@ class Facebook:
                 f'{self.FACEBOOK_BASE_WWW}/me',
                 headers=self.apiGetHeadersDesktop()
             ).text
-            time.sleep(3)
+            time.sleep(15)
 
             EAAI = self.apiGetTokenEAAI(api)
             if EAAI is None:
                 return None
+            time.sleep(15)
 
             # EAAG = self.apiGetTokenEAAG(api)
 
